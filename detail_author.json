@@ -1,0 +1,23 @@
+{
+    "status": "success",
+    "message": "Detail author berhasil temukan",
+    "data": {
+        "author": {
+            "id": 1,
+            "name": "John Doe",
+            "email": "johndoe@example.com"
+        },
+        "books": [
+            {
+                "id": 101,
+                "tittle": "Judul buku pertama",
+                "price": 1500000
+            },
+            {
+                "id": 102,
+                "tittle": "Judul buku kedua",
+                "price": 800000
+            }
+        ]
+    }
+}
