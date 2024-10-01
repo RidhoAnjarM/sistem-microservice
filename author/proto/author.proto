@@ -1,0 +1,69 @@
+syntax = "proto3";
+
+package authorpb;
+
+option go_package = "./;authorpb";
+
+service AuthorService {
+    rpc CreateAuthor(CreateAuthorRequest) returns (CreateAuthorResponse);
+    rpc GetAuthor(GetAuthorRequest) returns (GetAuthorResponse);
+    rpc UpdateAuthor(UpdateAuthorRequest) returns (UpdateAuthorResponse);
+    rpc DeleteAuthor(DeleteAuthorRequest) returns (DeleteAuthorResponse);
+    rpc GetAllAuthors(Empty) returns (GetAllAuthorsResponse);
+}
+
+message CreateAuthorRequest {
+    string name = 1;
+    string email = 2;
+}
+
+message CreateAuthorResponse {
+    string status = 1;
+    string message = 2;
+    Author author = 3;
+}
+
+message GetAuthorRequest {
+    int32 id = 1;
+}
+
+message GetAuthorResponse {
+    string status = 1;
+    string message = 2;
+    Author author = 3;
+}
+
+message UpdateAuthorRequest {
+    int32 id = 1;
+    string name = 2;
+    string email = 3;
+}
+
+message UpdateAuthorResponse {
+    string status = 1;
+    string message = 2;
+    Author author = 3;
+}
+
+message DeleteAuthorRequest {
+    int32 id = 1;
+}
+
+message DeleteAuthorResponse {
+    string status = 1;
+    string message = 2;
+}
+
+message Author {
+    int32 id = 1;
+    string name = 2;
+    string email = 3;
+}
+
+message Empty {}
+
+message GetAllAuthorsResponse {
+    string status = 1;
+    string message = 2;
+    repeated Author authors = 3;
+}

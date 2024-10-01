@@ -30,8 +30,6 @@ func main() {
 
 	// Start V1
 	http.HandleFunc("/api/v1/hello", corsMiddleware(controller.Example))
-	http.HandleFunc("/api/v1/users", corsMiddleware(controller.GetAllUsers))
-
 	// Set address dan port tempat server berjalan
 	ln, err := net.Listen("tcp", "localhost:"+constants.PORT)
 	if err != nil {

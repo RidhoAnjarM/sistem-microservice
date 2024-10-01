@@ -1,13 +1,13 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"net"
-	"os"
 	"sistem-microservice/author/constants"
 	"sistem-microservice/author/controllers"
+	"sistem-microservice/author/models"
+	authorpb "sistem-microservice/author/proto"
 
 	"github.com/joho/godotenv"
 	"google.golang.org/grpc"
@@ -16,19 +16,13 @@ import (
 func main() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatalf("Error loading .env file")
+		log.Fatalf("Error loading .env file: %v", err)
 	}
 
-	postgresURL := os.Getenv("POSTGRES_URL")
-	if postgresURL == "" {
-		log.Fatal("POSTGRES_URL not set in .env file")
-	}
-
-	db, err := pgxpool.Connect(context.Background(), postgresURL)
+	db, err := models.GetSqlConnection()
 	if err != nil {
 		log.Fatalf("Unable to connect to database: %v", err)
 	}
-	defer db.Close()
 
 	fmt.Println("Connected to database")
 
@@ -40,7 +34,7 @@ func main() {
 	grpcServer := grpc.NewServer()
 	authorpb.RegisterAuthorServiceServer(grpcServer, controllers.NewAuthorController(db))
 
-	fmt.Printf("Server is running on port %s\n", constants.PORT)
+	fmt.Printf("Author service is running on port %s\n", constants.PORT)
 	if err := grpcServer.Serve(listener); err != nil {
 		log.Fatalf("Failed to serve: %v", err)
 	}

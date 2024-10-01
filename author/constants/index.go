@@ -3,5 +3,5 @@ package constants
 const (
 	ENV    = "dev"
 	DEVICE = "remote"
-	PORT   = "3333"
+	PORT   = "50051"
 )

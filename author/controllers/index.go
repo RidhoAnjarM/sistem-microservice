@@ -17,7 +17,7 @@ func NewInstance() InDb {
 	}
 
 	return InDb{
-		db,
+		sql: db,
 	}
 }
 
