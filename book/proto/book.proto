@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package bookpb;
+
+option go_package = "/proto";
+
+service BookService {
+  rpc CreateBook (CreateBookRequest) returns (CreateBookResponse);
+  rpc GetBook (GetBookRequest) returns (GetBookResponse);
+  rpc UpdateBook (UpdateBookRequest) returns (UpdateBookResponse);
+  rpc DeleteBook (DeleteBookRequest) returns (DeleteBookResponse);
+}
+
+message Book {
+  int32 id = 1;
+  string title = 2;
+  int32 price = 3;
+  int32 author_id = 4;
+}
+
+message CreateBookRequest {
+  string title = 1;
+  int32 price = 2;
+  int32 author_id = 3;
+}
+
+message CreateBookResponse {
+  Book book = 1;
+}
+
+message GetBookRequest {
+  int32 id = 1;
+}
+
+message GetBookResponse {
+  Book book = 1;
+}
+
+message UpdateBookRequest {
+  int32 id = 1;
+  string title = 2;
+  int32 price = 3;
+}
+
+message UpdateBookResponse {
+  Book book = 1;
+}
+
+message DeleteBookRequest {
+  int32 id = 1;
+}
+
+message DeleteBookResponse {
+  string message = 1;
+}
