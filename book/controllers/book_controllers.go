@@ -15,14 +15,14 @@ type BookController struct {
 	bookpb.UnimplementedBookServiceServer
 }
 
-// NewBookController initializes a new BookController with a *gorm.DB instance
+// NewBookController 
 func NewBookController(db *gorm.DB) *BookController {
 	return &BookController{
 		DB: db,
 	}
 }
 
-// CreateBook handles creating a new book in the database
+// CreateBook 
 func (bc *BookController) CreateBook(ctx context.Context, req *bookpb.CreateBookRequest) (*bookpb.CreateBookResponse, error) {
 	// Create a new book instance based on the incoming request
 	book := models.Book{
@@ -31,12 +31,12 @@ func (bc *BookController) CreateBook(ctx context.Context, req *bookpb.CreateBook
 		AuthorID: int(req.GetAuthorId()),
 	}
 
-	// Insert the book into the database
+	// Insert buku ke database
 	if err := bc.DB.Create(&book).Error; err != nil {
 		return nil, err
 	}
 
-	// Return the response with the created book details
+	// Return response
 	return &bookpb.CreateBookResponse{
 		Book: &bookpb.Book{
 			Id:       int32(book.ID),
@@ -47,11 +47,11 @@ func (bc *BookController) CreateBook(ctx context.Context, req *bookpb.CreateBook
 	}, nil
 }
 
-// GetBook handles fetching a book by its ID from the database
+// GetBook
 func (bc *BookController) GetBook(ctx context.Context, req *bookpb.GetBookRequest) (*bookpb.GetBookResponse, error) {
 	var book models.Book
 
-	// Fetch the book from the database using the ID from the request
+	// Mengambil data buku di database
 	if err := bc.DB.First(&book, req.GetId()).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, fmt.Errorf("book not found")
@@ -59,7 +59,7 @@ func (bc *BookController) GetBook(ctx context.Context, req *bookpb.GetBookReques
 		return nil, err
 	}
 
-	// Return the response with the fetched book details
+	// Return response
 	return &bookpb.GetBookResponse{
 		Book: &bookpb.Book{
 			Id:       int32(book.ID),
@@ -70,11 +70,11 @@ func (bc *BookController) GetBook(ctx context.Context, req *bookpb.GetBookReques
 	}, nil
 }
 
-// UpdateBook handles updating an existing book in the database
+// UpdateBook
 func (bc *BookController) UpdateBook(ctx context.Context, req *bookpb.UpdateBookRequest) (*bookpb.UpdateBookResponse, error) {
 	var book models.Book
 
-	// Check if the book exists in the database
+	// Check data di database
 	if err := bc.DB.First(&book, req.GetId()).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, fmt.Errorf("book not found")
@@ -82,16 +82,16 @@ func (bc *BookController) UpdateBook(ctx context.Context, req *bookpb.UpdateBook
 		return nil, err
 	}
 
-	// Update the book fields with the data from the request
+	// Update book 
 	book.Title = req.GetTitle()
 	book.Price = int(req.GetPrice())
 
-	// Save the updated book to the database
+	// Simpan update book ke database
 	if err := bc.DB.Save(&book).Error; err != nil {
 		return nil, err
 	}
 
-	// Return the response with the updated book details
+	// Return response
 	return &bookpb.UpdateBookResponse{
 		Book: &bookpb.Book{
 			Id:       int32(book.ID),
@@ -102,11 +102,11 @@ func (bc *BookController) UpdateBook(ctx context.Context, req *bookpb.UpdateBook
 	}, nil
 }
 
-// DeleteBook handles removing a book from the database by its ID
+// DeleteBook
 func (bc *BookController) DeleteBook(ctx context.Context, req *bookpb.DeleteBookRequest) (*bookpb.DeleteBookResponse, error) {
 	var book models.Book
 
-	// Check if the book exists in the database
+	// Check data di database
 	if err := bc.DB.First(&book, req.GetId()).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, fmt.Errorf("book not found")
@@ -114,12 +114,12 @@ func (bc *BookController) DeleteBook(ctx context.Context, req *bookpb.DeleteBook
 		return nil, err
 	}
 
-	// Delete the book from the database
+	// Delete book dari database
 	if err := bc.DB.Delete(&book).Error; err != nil {
 		return nil, err
 	}
 
-	// Return a successful delete response
+	// Return response
 	return &bookpb.DeleteBookResponse{
 		Message: "Book successfully deleted",
 	}, nil
