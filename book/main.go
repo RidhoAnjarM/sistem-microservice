@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"log"
 	"net"
-	"sistem-microservice/book/constants"
-	"sistem-microservice/book/controllers"
-	"sistem-microservice/book/models"
-	bookpb "sistem-microservice/book/proto"
+	"github.com/raffa/book/constants"
+	"github.com/raffa/book/controllers"
+	"github.com/raffa/book/models"
+	bookpb "github.com/raffa/book/proto"
 
 	"github.com/joho/godotenv"
 	"google.golang.org/grpc"
@@ -36,8 +36,8 @@ func main() {
 	grpcServer := grpc.NewServer()
 	bookpb.RegisterBookServiceServer(grpcServer, controllers.NewBookController(db))
 
-	fmt.Printf("Book service is running on port %s\n", constants.PORT)
+	fmt.Printf("Book service sedang berjalan di port %s\n", constants.PORT)
 	if err := grpcServer.Serve(listener); err != nil {
-		log.Fatalf("Failed to serve: %v", err)
+		log.Fatalf("Gagal connect ke server: %v", err)
 	}
 }

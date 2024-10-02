@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	bookpb "sistem-microservice/book/proto"
+	bookpb "github.com/raffa/book/proto"
 
 	"gorm.io/gorm"
 )
