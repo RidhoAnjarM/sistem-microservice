@@ -2,8 +2,8 @@ package controllers
 
 import (
 	"context"
-	"github.com/raffa/book/models"
-	bookpb "github.com/raffa/book/proto"
+	"sistem-microservice/book/models"
+	bookpb "sistem-microservice/book/proto"
 )
 
 // CreateBook

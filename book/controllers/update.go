@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/raffa/book/models"
-	bookpb "github.com/raffa/book/proto"
+	"sistem-microservice/book/models"
+	bookpb "sistem-microservice/book/proto"
 
 	"gorm.io/gorm"
 )
