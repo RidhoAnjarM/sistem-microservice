@@ -2,7 +2,9 @@ syntax = "proto3";
 
 package authorpb;
 
-option go_package = "./;authorpb";
+import "book/proto/book.proto";
+
+option go_package = "sistem-microservice/author/proto;authorpb";
 
 service AuthorService {
     rpc CreateAuthor(CreateAuthorRequest) returns (CreateAuthorResponse);
@@ -58,6 +60,7 @@ message Author {
     int32 id = 1;
     string name = 2;
     string email = 3;
+    repeated bookpb.Book books = 4;
 }
 
 message Empty {}
