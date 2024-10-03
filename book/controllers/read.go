@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/raffa/book/models"
-	bookpb "github.com/raffa/book/proto"
+	"sistem-microservice/book/models"
+	bookpb "sistem-microservice/book/proto"
 
 	"gorm.io/gorm"
 )
@@ -30,5 +30,27 @@ func (bc *BookController) GetBook(ctx context.Context, req *bookpb.GetBookReques
 			Price:    int32(book.Price),
 			AuthorId: int32(book.AuthorID),
 		},
+	}, nil
+}
+
+// GetBooksByAuthorId
+func (bc *BookController) GetBooksByAuthorId(ctx context.Context, req *bookpb.GetBooksByAuthorIdRequest) (*bookpb.GetBooksByAuthorIdResponse, error) {
+	var books []models.Book
+	if err := bc.DB.Where("author_id = ?", req.GetAuthorId()).Find(&books).Error; err != nil {
+		return nil, err
+	}
+
+	var bookList []*bookpb.Book
+	for _, book := range books {
+		bookList = append(bookList, &bookpb.Book{
+			Id:       int32(book.ID),
+			Title:    book.Title,
+			Price:    int32(book.Price),
+			AuthorId: int32(book.AuthorID),
+		})
+	}
+
+	return &bookpb.GetBooksByAuthorIdResponse{
+		Books: bookList,
 	}, nil
 }

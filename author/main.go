@@ -19,13 +19,15 @@ func main() {
 		log.Fatalf("Error loading .env file: %v", err)
 	}
 
+	// Membuat koneksi database menggunakan GORM
 	db, err := models.GetSqlConnection()
 	if err != nil {
-		log.Fatalf("Unable to connect to database: %v", err)
+		log.Fatalf("gagal connect ke database: %v", err)
 	}
 
-	fmt.Println("Connected to database")
+	fmt.Println("berhasil connect ke database")
 
+	// Set up gRPC server
 	listener, err := net.Listen("tcp", ":"+constants.PORT)
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
@@ -34,8 +36,8 @@ func main() {
 	grpcServer := grpc.NewServer()
 	authorpb.RegisterAuthorServiceServer(grpcServer, controllers.NewAuthorController(db))
 
-	fmt.Printf("Author service is running on port %s\n", constants.PORT)
+	fmt.Printf("Author service sedang berjalan di port %s\n", constants.PORT)
 	if err := grpcServer.Serve(listener); err != nil {
-		log.Fatalf("Failed to serve: %v", err)
+		log.Fatalf("Gagal connect ke server: %v", err)
 	}
 }

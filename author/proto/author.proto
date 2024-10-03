@@ -33,6 +33,7 @@ message GetAuthorResponse {
     string status = 1;
     string message = 2;
     Author author = 3;
+    repeated bookpb.Book books = 4;
 }
 
 message UpdateAuthorRequest {

@@ -1,19 +1,28 @@
 package controllers
 
-import(
+import (
 	"context"
+	"errors"
+	"fmt"
 	"sistem-microservice/author/models"
 	authorpb "sistem-microservice/author/proto"
+	bookpb "sistem-microservice/book/proto"
 
+	"gorm.io/gorm"
 )
 
-// Get Author
-func (c *AuthorController) GetAuthor(ctx context.Context, req *authorpb.GetAuthorRequest) (*authorpb.GetAuthorResponse, error) {
+// GetAuthorWithBooks
+func (ac *AuthorController) GetAuthorWithBooks(ctx context.Context, req *authorpb.GetAuthorRequest) (*authorpb.GetAuthorResponse, error) {
 	var author models.Author
-	if err := c.DB.First(&author, req.Id).Error; err != nil {
+	// Ambil author dari database
+	if err := ac.DB.Preload("Books").First(&author, req.GetId()).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, fmt.Errorf("author not found")
+		}
 		return nil, err
 	}
 
+	// Buat response
 	return &authorpb.GetAuthorResponse{
 		Status:  "success",
 		Message: "Detail author berhasil ditemukan",
@@ -21,8 +30,23 @@ func (c *AuthorController) GetAuthor(ctx context.Context, req *authorpb.GetAutho
 			Id:    int32(author.ID),
 			Name:  author.Name,
 			Email: author.Email,
+			Books: convertBooks(author.Books),
 		},
 	}, nil
+}
+
+// Fungsi untuk mengonversi daftar buku ke format proto
+func convertBooks(books []models.Book) []*bookpb.Book {
+	var bookList []*bookpb.Book
+	for _, b := range books {
+		bookList = append(bookList, &bookpb.Book{
+			Id:       int32(b.ID),
+			Title:    b.Title,
+			Price:    int32(b.Price),
+			AuthorId: int32(b.AuthorID),
+		})
+	}
+	return bookList
 }
 
 // Get All Authors

@@ -7,6 +7,7 @@ option go_package = "sistem-microservice/book/proto;bookpb";
 service BookService {
   rpc CreateBook (CreateBookRequest) returns (CreateBookResponse);
   rpc GetBook (GetBookRequest) returns (GetBookResponse);
+  rpc GetBooksByAuthorId(GetBooksByAuthorIdRequest) returns (GetBooksByAuthorIdResponse);
   rpc UpdateBook (UpdateBookRequest) returns (UpdateBookResponse);
   rpc DeleteBook (DeleteBookRequest) returns (DeleteBookResponse);
 }
@@ -34,6 +35,14 @@ message GetBookRequest {
 
 message GetBookResponse {
   Book book = 1;
+}
+
+message GetBooksByAuthorIdRequest {
+  int32 author_id = 1;
+}
+
+message GetBooksByAuthorIdResponse {
+  repeated Book books = 1;
 }
 
 message UpdateBookRequest {
