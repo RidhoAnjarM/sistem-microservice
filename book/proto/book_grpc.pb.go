@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v5.28.2
-// source: book/proto/book.proto
+// source: proto/book.proto
 
-package bookpb
+package proto
 
 import (
 	context "context"
@@ -24,6 +24,7 @@ const (
 	BookService_GetBooksByAuthorId_FullMethodName = "/bookpb.BookService/GetBooksByAuthorId"
 	BookService_UpdateBook_FullMethodName         = "/bookpb.BookService/UpdateBook"
 	BookService_DeleteBook_FullMethodName         = "/bookpb.BookService/DeleteBook"
+	BookService_GetAllBooks_FullMethodName        = "/bookpb.BookService/GetAllBooks"
 )
 
 // BookServiceClient is the client API for BookService service.
@@ -35,6 +36,7 @@ type BookServiceClient interface {
 	GetBooksByAuthorId(ctx context.Context, in *GetBooksByAuthorIdRequest, opts ...grpc.CallOption) (*GetBooksByAuthorIdResponse, error)
 	UpdateBook(ctx context.Context, in *UpdateBookRequest, opts ...grpc.CallOption) (*UpdateBookResponse, error)
 	DeleteBook(ctx context.Context, in *DeleteBookRequest, opts ...grpc.CallOption) (*DeleteBookResponse, error)
+	GetAllBooks(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*GetAllBooksResponse, error)
 }
 
 type bookServiceClient struct {
@@ -95,6 +97,16 @@ func (c *bookServiceClient) DeleteBook(ctx context.Context, in *DeleteBookReques
 	return out, nil
 }
 
+func (c *bookServiceClient) GetAllBooks(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*GetAllBooksResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetAllBooksResponse)
+	err := c.cc.Invoke(ctx, BookService_GetAllBooks_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BookServiceServer is the server API for BookService service.
 // All implementations must embed UnimplementedBookServiceServer
 // for forward compatibility.
@@ -104,6 +116,7 @@ type BookServiceServer interface {
 	GetBooksByAuthorId(context.Context, *GetBooksByAuthorIdRequest) (*GetBooksByAuthorIdResponse, error)
 	UpdateBook(context.Context, *UpdateBookRequest) (*UpdateBookResponse, error)
 	DeleteBook(context.Context, *DeleteBookRequest) (*DeleteBookResponse, error)
+	GetAllBooks(context.Context, *Empty) (*GetAllBooksResponse, error)
 	mustEmbedUnimplementedBookServiceServer()
 }
 
@@ -128,6 +141,9 @@ func (UnimplementedBookServiceServer) UpdateBook(context.Context, *UpdateBookReq
 }
 func (UnimplementedBookServiceServer) DeleteBook(context.Context, *DeleteBookRequest) (*DeleteBookResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteBook not implemented")
+}
+func (UnimplementedBookServiceServer) GetAllBooks(context.Context, *Empty) (*GetAllBooksResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllBooks not implemented")
 }
 func (UnimplementedBookServiceServer) mustEmbedUnimplementedBookServiceServer() {}
 func (UnimplementedBookServiceServer) testEmbeddedByValue()                     {}
@@ -240,6 +256,24 @@ func _BookService_DeleteBook_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BookService_GetAllBooks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BookServiceServer).GetAllBooks(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BookService_GetAllBooks_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BookServiceServer).GetAllBooks(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BookService_ServiceDesc is the grpc.ServiceDesc for BookService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -267,7 +301,11 @@ var BookService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "DeleteBook",
 			Handler:    _BookService_DeleteBook_Handler,
 		},
+		{
+			MethodName: "GetAllBooks",
+			Handler:    _BookService_GetAllBooks_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "book/proto/book.proto",
+	Metadata: "proto/book.proto",
 }

@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package bookpb;
 
-option go_package = "sistem-microservice/book/proto;bookpb";
+option go_package = "proto/";
 
 service BookService {
   rpc CreateBook (CreateBookRequest) returns (CreateBookResponse);
@@ -10,6 +10,7 @@ service BookService {
   rpc GetBooksByAuthorId(GetBooksByAuthorIdRequest) returns (GetBooksByAuthorIdResponse);
   rpc UpdateBook (UpdateBookRequest) returns (UpdateBookResponse);
   rpc DeleteBook (DeleteBookRequest) returns (DeleteBookResponse);
+  rpc GetAllBooks(Empty) returns (GetAllBooksResponse);
 }
 
 message Book {
@@ -61,4 +62,12 @@ message DeleteBookRequest {
 
 message DeleteBookResponse {
   string message = 1;
+}
+
+message Empty{}
+
+message GetAllBooksResponse {
+  string status = 1;
+  string message = 2;
+  repeated Book book = 3;
 }

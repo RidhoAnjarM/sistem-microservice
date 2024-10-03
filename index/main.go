@@ -36,7 +36,8 @@ func main() {
 	ac := controllers.NewAuthorController(db)
 
 	// Daftarkan route
-	r.GET("/authors/:id", ac.GetAuthorHandler) // Tambahkan ini
+	r.GET("/authors/:id", ac.GetAuthorHandler)
+	r.DELETE("/authors/:id", ac.DeleteAuthorHandler)
 
 	go func() {
 		listener, err := net.Listen("tcp", ":"+ PORT)

@@ -54,3 +54,28 @@ func (bc *BookController) GetBooksByAuthorId(ctx context.Context, req *bookpb.Ge
 		Books: bookList,
 	}, nil
 }
+
+// Get All book
+func (c *BookController) GetAllAuthors(ctx context.Context, req *bookpb.Empty) (*bookpb.GetAllBooksResponse, error) {
+	var books []models.Book
+	result := c.DB.Find(&books)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	var bookList []*bookpb.Book
+	for _, book := range books {
+		bookList = append(bookList, &bookpb.Book{
+			Id:    int32(book.ID),
+			Title: book.Title,
+			Price: int32(book.Price),
+		})
+	}
+
+	return &bookpb.GetAllBooksResponse{
+		Status:  "success",
+		Message: "Books retrieved successfully",
+		Book: bookList,
+	}, nil
+}
