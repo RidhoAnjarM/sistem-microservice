@@ -73,3 +73,4 @@ func (c *AuthorController) GetAllAuthors(ctx context.Context, req *authorpb.Empt
 		Authors: authorList,
 	}, nil
 }
+

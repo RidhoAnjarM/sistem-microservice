@@ -19,43 +19,45 @@ const(
 )
 
 func main() {
+	// Load .env file
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatalf("Error loading .env file: %v", err)
 	}
 
+	// Connect to the database
 	db, err := models.GetSqlConnection()
 	if err != nil {
-		log.Fatalf("Unable to connect to database: %v", err)
+		log.Fatalf("Failed to connect to database: %v", err)
 	}
-
 	fmt.Println("Connected to database")
 
-	// Set up HTTP server
 	r := gin.Default()
 	ac := controllers.NewAuthorController(db)
 
-	// Daftarkan route
-	r.GET("/authors/:id", ac.GetAuthorHandler)
-	r.DELETE("/authors/:id", ac.DeleteAuthorHandler)
+	// Register HTTP routes
+	r.POST("/authors/create", ac.CreateAuthorHandler)  
+	r.GET("/authors/:id", ac.GetAuthorHandler) 
+	r.DELETE("/authors/:id", ac.DeleteAuthorHandler) 
 
+	// Jalankan HTTP server di goroutine
 	go func() {
-		listener, err := net.Listen("tcp", ":"+ PORT)
-		if err != nil {
-			log.Fatalf("Failed to listen: %v", err)
-		}
-
-		grpcServer := grpc.NewServer()
-		authorpb.RegisterAuthorServiceServer(grpcServer, ac)
-
-		fmt.Printf("Author service is running on port %s\n", PORT)
-		if err := grpcServer.Serve(listener); err != nil {
-			log.Fatalf("Failed to serve: %v", err)
+		if err := r.Run(":" + HTTP_PORT); err != nil {
+			log.Fatalf("Failed to run HTTP server: %v", err)
 		}
 	}()
 
-	// Mulai server HTTP
-	if err := r.Run(":" + HTTP_PORT); err != nil {
-		log.Fatalf("Failed to run: %v", err)
+	// Set up gRPC server
+	listener, err := net.Listen("tcp", ":"+PORT)
+	if err != nil {
+		log.Fatalf("Failed to listen on port %s: %v", HTTP_PORT, err)
+	}
+
+	grpcServer := grpc.NewServer()
+	authorpb.RegisterAuthorServiceServer(grpcServer, ac) 
+
+	fmt.Printf("gRPC server is running on port %s\n", HTTP_PORT)
+	if err := grpcServer.Serve(listener); err != nil {
+		log.Fatalf("Failed to serve gRPC: %v", err)
 	}
 }
