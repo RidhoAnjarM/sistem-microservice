@@ -33,6 +33,8 @@ func (bc *BookController) UpdateBook(ctx context.Context, req *bookpb.UpdateBook
 
 	// Return response
 	return &bookpb.UpdateBookResponse{
+		Status: "success",
+		Message: "berhasil update book",
 		Book: &bookpb.Book{
 			Id:       int32(book.ID),
 			Title:    book.Title,

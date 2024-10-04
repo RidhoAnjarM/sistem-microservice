@@ -51,12 +51,14 @@ func (bc *BookController) GetBooksByAuthorId(ctx context.Context, req *bookpb.Ge
 	}
 
 	return &bookpb.GetBooksByAuthorIdResponse{
+		Status: "success",
+		Message: "berhasil menampilkan data book",
 		Books: bookList,
 	}, nil
 }
 
 // Get All book
-func (c *BookController) GetAllAuthors(ctx context.Context, req *bookpb.Empty) (*bookpb.GetAllBooksResponse, error) {
+func (c *BookController) GetAllBooks(ctx context.Context, req *bookpb.Empty) (*bookpb.GetAllBooksResponse, error) {
 	var books []models.Book
 	result := c.DB.Find(&books)
 
