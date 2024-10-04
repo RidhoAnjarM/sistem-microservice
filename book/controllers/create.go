@@ -22,6 +22,8 @@ func (bc *BookController) CreateBook(ctx context.Context, req *bookpb.CreateBook
 
 	// Return response
 	return &bookpb.CreateBookResponse{
+		Status: "success",
+		Message: "berhasil membuat buku",
 		Book: &bookpb.Book{
 			Id:       int32(book.ID),
 			Title:    book.Title,

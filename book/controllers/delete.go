@@ -29,6 +29,7 @@ func (bc *BookController) DeleteBook(ctx context.Context, req *bookpb.DeleteBook
 
 	// Return response
 	return &bookpb.DeleteBookResponse{
+		Status: "success",
 		Message: "Book successfully deleted",
 	}, nil
 }
