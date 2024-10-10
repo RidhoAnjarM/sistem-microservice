@@ -33,3 +33,21 @@ func (bc *BookController) DeleteBook(ctx context.Context, req *bookpb.DeleteBook
 		Message: "Book successfully deleted",
 	}, nil
 }
+
+// Di server BookService
+func (bc *BookController) DeleteBooksByAuthorId(ctx context.Context, req *bookpb.DeleteBooksByAuthorIdRequest) (*bookpb.DeleteBooksByAuthorIdResponse, error) {
+    authorId := req.GetAuthorId()
+
+    // Menghapus semua buku berdasarkan author_id
+    if err := bc.DB.Where("author_id = ?", authorId).Delete(&models.Book{}).Error; err != nil {
+        return &bookpb.DeleteBooksByAuthorIdResponse{
+            Status:  "error",
+            Message: "Failed to delete related books",
+        }, err
+    }
+
+    return &bookpb.DeleteBooksByAuthorIdResponse{
+        Status:  "success",
+        Message: "Related books deleted successfully",
+    }, nil
+}

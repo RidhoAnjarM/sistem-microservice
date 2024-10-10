@@ -1,8 +1,7 @@
 package controllers
 
 import (
-	bookpb "sistem-microservice/book/proto"
-
+	 bookpb "sistem-microservice/book/proto"
 	"gorm.io/gorm"
 )
 
@@ -17,3 +16,4 @@ func NewBookController(db *gorm.DB) *BookController {
 		DB: db,
 	}
 }
+

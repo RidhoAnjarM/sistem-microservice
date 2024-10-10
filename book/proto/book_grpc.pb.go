@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v5.28.2
-// source: proto/book.proto
+// source: book/proto/book.proto
 
 package proto
 
@@ -19,12 +19,13 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	BookService_CreateBook_FullMethodName         = "/bookpb.BookService/CreateBook"
-	BookService_GetBook_FullMethodName            = "/bookpb.BookService/GetBook"
-	BookService_GetBooksByAuthorId_FullMethodName = "/bookpb.BookService/GetBooksByAuthorId"
-	BookService_UpdateBook_FullMethodName         = "/bookpb.BookService/UpdateBook"
-	BookService_DeleteBook_FullMethodName         = "/bookpb.BookService/DeleteBook"
-	BookService_GetAllBooks_FullMethodName        = "/bookpb.BookService/GetAllBooks"
+	BookService_CreateBook_FullMethodName            = "/bookpb.BookService/CreateBook"
+	BookService_GetBook_FullMethodName               = "/bookpb.BookService/GetBook"
+	BookService_GetBooksByAuthorId_FullMethodName    = "/bookpb.BookService/GetBooksByAuthorId"
+	BookService_UpdateBook_FullMethodName            = "/bookpb.BookService/UpdateBook"
+	BookService_DeleteBook_FullMethodName            = "/bookpb.BookService/DeleteBook"
+	BookService_DeleteBooksByAuthorId_FullMethodName = "/bookpb.BookService/DeleteBooksByAuthorId"
+	BookService_GetAllBooks_FullMethodName           = "/bookpb.BookService/GetAllBooks"
 )
 
 // BookServiceClient is the client API for BookService service.
@@ -36,6 +37,7 @@ type BookServiceClient interface {
 	GetBooksByAuthorId(ctx context.Context, in *GetBooksByAuthorIdRequest, opts ...grpc.CallOption) (*GetBooksByAuthorIdResponse, error)
 	UpdateBook(ctx context.Context, in *UpdateBookRequest, opts ...grpc.CallOption) (*UpdateBookResponse, error)
 	DeleteBook(ctx context.Context, in *DeleteBookRequest, opts ...grpc.CallOption) (*DeleteBookResponse, error)
+	DeleteBooksByAuthorId(ctx context.Context, in *DeleteBooksByAuthorIdRequest, opts ...grpc.CallOption) (*DeleteBooksByAuthorIdResponse, error)
 	GetAllBooks(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*GetAllBooksResponse, error)
 }
 
@@ -97,6 +99,16 @@ func (c *bookServiceClient) DeleteBook(ctx context.Context, in *DeleteBookReques
 	return out, nil
 }
 
+func (c *bookServiceClient) DeleteBooksByAuthorId(ctx context.Context, in *DeleteBooksByAuthorIdRequest, opts ...grpc.CallOption) (*DeleteBooksByAuthorIdResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteBooksByAuthorIdResponse)
+	err := c.cc.Invoke(ctx, BookService_DeleteBooksByAuthorId_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *bookServiceClient) GetAllBooks(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*GetAllBooksResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetAllBooksResponse)
@@ -116,6 +128,7 @@ type BookServiceServer interface {
 	GetBooksByAuthorId(context.Context, *GetBooksByAuthorIdRequest) (*GetBooksByAuthorIdResponse, error)
 	UpdateBook(context.Context, *UpdateBookRequest) (*UpdateBookResponse, error)
 	DeleteBook(context.Context, *DeleteBookRequest) (*DeleteBookResponse, error)
+	DeleteBooksByAuthorId(context.Context, *DeleteBooksByAuthorIdRequest) (*DeleteBooksByAuthorIdResponse, error)
 	GetAllBooks(context.Context, *Empty) (*GetAllBooksResponse, error)
 	mustEmbedUnimplementedBookServiceServer()
 }
@@ -141,6 +154,9 @@ func (UnimplementedBookServiceServer) UpdateBook(context.Context, *UpdateBookReq
 }
 func (UnimplementedBookServiceServer) DeleteBook(context.Context, *DeleteBookRequest) (*DeleteBookResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteBook not implemented")
+}
+func (UnimplementedBookServiceServer) DeleteBooksByAuthorId(context.Context, *DeleteBooksByAuthorIdRequest) (*DeleteBooksByAuthorIdResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteBooksByAuthorId not implemented")
 }
 func (UnimplementedBookServiceServer) GetAllBooks(context.Context, *Empty) (*GetAllBooksResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllBooks not implemented")
@@ -256,6 +272,24 @@ func _BookService_DeleteBook_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BookService_DeleteBooksByAuthorId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteBooksByAuthorIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BookServiceServer).DeleteBooksByAuthorId(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BookService_DeleteBooksByAuthorId_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BookServiceServer).DeleteBooksByAuthorId(ctx, req.(*DeleteBooksByAuthorIdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _BookService_GetAllBooks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Empty)
 	if err := dec(in); err != nil {
@@ -302,10 +336,14 @@ var BookService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _BookService_DeleteBook_Handler,
 		},
 		{
+			MethodName: "DeleteBooksByAuthorId",
+			Handler:    _BookService_DeleteBooksByAuthorId_Handler,
+		},
+		{
 			MethodName: "GetAllBooks",
 			Handler:    _BookService_GetAllBooks_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "proto/book.proto",
+	Metadata: "book/proto/book.proto",
 }

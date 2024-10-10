@@ -1,8 +1,8 @@
 package models
 
 type Book struct {
-	ID       int    `gorm:"primaryKey"`
-	Title    string `gorm:"type:varchar(255)"`
-	Price    int
-	AuthorID int
+	ID       int    `json:"id" gorm:"primaryKey"`              
+	Title    string `json:"title"`
+	Price    int    `json:"price"`
+	AuthorID int    `json:"author_id"`                       
 }

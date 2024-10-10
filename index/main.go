@@ -1,63 +1,63 @@
 package main
 
 import (
-	"fmt"
-	"log"
-	"net"
-	"sistem-microservice/author/controllers"
-	"sistem-microservice/author/models"
-	authorpb "sistem-microservice/author/proto"
-
-	"github.com/joho/godotenv"
-	"github.com/gin-gonic/gin"
-	"google.golang.org/grpc"
-)
-
-const(
-	PORT = "8080"
-	HTTP_PORT = "50053"
+    "fmt"
+    "log"
+    "net/http"
+    authorController "sistem-microservice/author/controllers"
+    bookController "sistem-microservice/book/controllers"
 )
 
 func main() {
-	// Load .env file
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatalf("Error loading .env file: %v", err)
-	}
+    fmt.Println("Gateway Starting...")
 
-	// Connect to the database
-	db, err := models.GetSqlConnection()
-	if err != nil {
-		log.Fatalf("Failed to connect to database: %v", err)
-	}
-	fmt.Println("Connected to database")
+    http.HandleFunc("/authors", authorHandler)
+    http.HandleFunc("/books", bookHandler)
 
-	r := gin.Default()
-	ac := controllers.NewAuthorController(db)
+    fmt.Println("Gateway is running on port 8080")
+    if err := http.ListenAndServe(":8080", nil); err != nil {
+        log.Fatalf("Error starting server: %v", err)
+    }
+}
 
-	// Register HTTP routes
-	r.POST("/authors/create", ac.CreateAuthorHandler)  
-	r.GET("/authors/:id", ac.GetAuthorHandler) 
-	r.DELETE("/authors/:id", ac.DeleteAuthorHandler) 
+// Handler untuk author, memanggil controller dari author/controllers
+func authorHandler(w http.ResponseWriter, r *http.Request) {
+    switch r.Method {
+    case http.MethodPost:
+        authorController.CreateAuthor(w, r)
+    case http.MethodGet:
+        idStr := r.URL.Query().Get("id")
+        if idStr != "" {
+            authorController.GetAuthor(w, r)
+        } else {
+            authorController.GetAllAuthors(w, r)
+        }
+    case http.MethodPut:
+        authorController.UpdateAuthor(w, r)
+    case http.MethodDelete:
+        authorController.DeleteAuthor(w, r)
+    default:
+        http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+    }
+}
 
-	// Jalankan HTTP server di goroutine
-	go func() {
-		if err := r.Run(":" + HTTP_PORT); err != nil {
-			log.Fatalf("Failed to run HTTP server: %v", err)
-		}
-	}()
-
-	// Set up gRPC server
-	listener, err := net.Listen("tcp", ":"+PORT)
-	if err != nil {
-		log.Fatalf("Failed to listen on port %s: %v", HTTP_PORT, err)
-	}
-
-	grpcServer := grpc.NewServer()
-	authorpb.RegisterAuthorServiceServer(grpcServer, ac) 
-
-	fmt.Printf("gRPC server is running on port %s\n", HTTP_PORT)
-	if err := grpcServer.Serve(listener); err != nil {
-		log.Fatalf("Failed to serve gRPC: %v", err)
-	}
+// Handler untuk book, memanggil controller dari book/controllers
+func bookHandler(w http.ResponseWriter, r *http.Request) {
+    switch r.Method {
+    case http.MethodPost:
+        bookController.CreateBook(w, r)
+    case http.MethodGet:
+        idStr := r.URL.Query().Get("id")
+        if idStr != "" {
+            bookController.GetBook(w, r)
+        } else {
+            bookController.GetAllBooks(w, r)
+        }
+    case http.MethodPut:
+        bookController.UpdateBook(w, r)
+    case http.MethodDelete:
+        bookController.DeleteBook(w, r)
+    default:
+        http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+    }
 }

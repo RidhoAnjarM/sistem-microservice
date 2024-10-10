@@ -33,12 +33,16 @@ func (bc *BookController) GetBook(ctx context.Context, req *bookpb.GetBookReques
 	}, nil
 }
 
-// GetBooksByAuthorId
+// GetBookByAuthorId
 func (bc *BookController) GetBooksByAuthorId(ctx context.Context, req *bookpb.GetBooksByAuthorIdRequest) (*bookpb.GetBooksByAuthorIdResponse, error) {
 	var books []models.Book
+
 	if err := bc.DB.Where("author_id = ?", req.GetAuthorId()).Find(&books).Error; err != nil {
+		fmt.Println("Error fetching books:", err)
 		return nil, err
 	}
+
+	fmt.Println("Books fetched:", books)
 
 	var bookList []*bookpb.Book
 	for _, book := range books {
@@ -51,9 +55,9 @@ func (bc *BookController) GetBooksByAuthorId(ctx context.Context, req *bookpb.Ge
 	}
 
 	return &bookpb.GetBooksByAuthorIdResponse{
-		Status: "success",
-		Message: "berhasil menampilkan data book",
-		Books: bookList,
+		Status:  "success",
+		Message: "Berhasil menampilkan data books",
+		Books:   bookList,
 	}, nil
 }
 
@@ -69,15 +73,16 @@ func (c *BookController) GetAllBooks(ctx context.Context, req *bookpb.Empty) (*b
 	var bookList []*bookpb.Book
 	for _, book := range books {
 		bookList = append(bookList, &bookpb.Book{
-			Id:    int32(book.ID),
-			Title: book.Title,
-			Price: int32(book.Price),
+			Id:       int32(book.ID),
+			Title:    book.Title,
+			Price:    int32(book.Price),
+			AuthorId: int32(book.AuthorID),
 		})
 	}
 
 	return &bookpb.GetAllBooksResponse{
 		Status:  "success",
 		Message: "Books retrieved successfully",
-		Book: bookList,
+		Book:    bookList,
 	}, nil
 }

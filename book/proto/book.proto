@@ -10,6 +10,7 @@ service BookService {
   rpc GetBooksByAuthorId(GetBooksByAuthorIdRequest) returns (GetBooksByAuthorIdResponse);
   rpc UpdateBook (UpdateBookRequest) returns (UpdateBookResponse);
   rpc DeleteBook (DeleteBookRequest) returns (DeleteBookResponse);
+  rpc DeleteBooksByAuthorId(DeleteBooksByAuthorIdRequest) returns (DeleteBooksByAuthorIdResponse);
   rpc GetAllBooks(Empty) returns (GetAllBooksResponse);
 }
 
@@ -79,4 +80,13 @@ message GetAllBooksResponse {
   string status = 1;
   string message = 2;
   repeated Book book = 3;
+}
+
+message DeleteBooksByAuthorIdRequest {
+  int32 author_id = 1; 
+}
+
+message DeleteBooksByAuthorIdResponse {
+  string status = 1;
+  string message = 2;
 }

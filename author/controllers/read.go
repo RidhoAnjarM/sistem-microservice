@@ -11,8 +11,8 @@ import (
 	"gorm.io/gorm"
 )
 
-// GetAuthorWithBooks
-func (ac *AuthorController) GetAuthorWithBooks(ctx context.Context, req *authorpb.GetAuthorRequest) (*authorpb.GetAuthorResponse, error) {
+// GetAuthor
+func (ac *AuthorController) GetAuthor(ctx context.Context, req *authorpb.GetAuthorRequest) (*authorpb.GetAuthorResponse, error) {
 	var author models.Author
 	// Ambil author dari database
 	if err := ac.DB.Preload("Books").First(&author, req.GetId()).Error; err != nil {
